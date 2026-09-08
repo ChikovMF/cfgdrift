@@ -9,14 +9,17 @@ pub struct Args {
 
 impl Args {
     pub fn parse() -> Result<Self, ArgsError> {
-        let args : Vec<OsString> = std::env::args_os().skip(1).collect();
+        let args: Vec<OsString> = std::env::args_os().skip(1).collect();
 
         match args.as_slice() {
             [left, right] => Ok(Args {
                 left_path: PathBuf::from(left),
                 right_path: PathBuf::from(right),
             }),
-            _ => Err(ArgsError::WrongArgumentCount),
+            _ => Err(ArgsError::WrongArgumentCount {
+                actual: args.len(),
+                expected: 2,
+            }),
         }
     }
 }

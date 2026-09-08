@@ -5,26 +5,38 @@ use cfgdrift::compare;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    let args = args::Args::parse().unwrap_or_else(|err| {
-        eprintln!("Error parsing arguments: {}", err);
-        std::process::exit(1);
-    });
+    let args = match args::Args::parse() {
+        Ok(args) => args,
+        Err(err) => {
+            report(&err);
+            return ExitCode::from(2);
+        }
+    };
 
     match compare(&args.left_path, &args.right_path) {
         Ok(diffs) if diffs.is_empty() => {
-            println!("Configs are identical.");
+            println!("конфигурации идентичны");
             ExitCode::SUCCESS
         }
         Ok(diffs) => {
-            println!("Configs differ:");
+            println!("конфигурации различаются:");
             for diff in diffs {
                 println!("{:?}", diff);
             }
             ExitCode::from(1)
         }
         Err(err) => {
-            eprintln!("Error comparing configs: {:?}", err);
+            report(&err);
             ExitCode::from(2)
         }
+    }
+}
+
+fn report(err: &dyn std::error::Error) {
+    eprintln!("ошибка: {err}");
+    let mut source = err.source();
+    while let Some(cause) = source {
+        eprintln!("  причина: {cause}");
+        source = cause.source();
     }
 }

@@ -7,9 +7,7 @@ pub struct JsonParser;
 
 impl JsonParser {
     pub fn parse(file: File) -> Result<ConfigMap, ParseError> {
-        let value: Value = serde_json::from_reader(file).map_err(|e| ParseError {
-            message: e.to_string(),
-        })?;
+        let value: Value = serde_json::from_reader(file)?;
         Ok(flatten_json(&value, ""))
     }
 }

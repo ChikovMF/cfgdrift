@@ -1,4 +1,5 @@
 mod args;
+mod args_error;
 
 use cfgdrift::compare;
 use std::process::ExitCode;

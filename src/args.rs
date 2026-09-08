@@ -1,3 +1,5 @@
+use crate::args_error::ArgsError;
+use std::ffi::OsString;
 use std::path::PathBuf;
 
 pub struct Args {
@@ -6,10 +8,15 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn parse() -> Result<Self, String> {
-        Ok(Args {
-            left_path: PathBuf::from("/home/ChikovMF/Загрузки/test.json"),
-            right_path: PathBuf::from("/home/ChikovMF/Загрузки/test2.json"),
-        })
+    pub fn parse() -> Result<Self, ArgsError> {
+        let args : Vec<OsString> = std::env::args_os().skip(1).collect();
+
+        match args.as_slice() {
+            [left, right] => Ok(Args {
+                left_path: PathBuf::from(left),
+                right_path: PathBuf::from(right),
+            }),
+            _ => Err(ArgsError::WrongArgumentCount),
+        }
     }
 }

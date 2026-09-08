@@ -1,6 +1,4 @@
 mod args;
-mod config;
-mod difference;
 
 use cfgdrift::compare;
 use std::process::ExitCode;

@@ -15,10 +15,10 @@ pub fn load(path: &Path) -> Result<ConfigMap, LoadError> {
     let config_format = ConfigFormat::from_path(path)
         .ok_or_else(|| LoadError::UnsupportedFormat(path.to_path_buf()))?;
 
-    let file = File::open(path).map_err(|e| LoadError::IoError(e))?;
+    let file = File::open(path).map_err(LoadError::IoError)?;
 
     match config_format {
         ConfigFormat::Json => JsonParser::parse(file),
     }
-    .map_err(|e| LoadError::ParseError(e))
+    .map_err(LoadError::ParseError)
 }

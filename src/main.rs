@@ -2,20 +2,30 @@ mod args;
 mod config;
 mod difference;
 
-use std::path::PathBuf;
+use cfgdrift::compare;
+use std::process::ExitCode;
 
-fn main() {
-    let args = args::Args {
-        left_path: PathBuf::from("/home/ChikovMF/Загрузки/test.json"),
-        right_path: PathBuf::from("/home/ChikovMF/Загрузки/test2.json"),
-    };
+fn main() -> ExitCode {
+    let args = args::Args::parse().unwrap_or_else(|err| {
+        eprintln!("Error parsing arguments: {}", err);
+        std::process::exit(1);
+    });
 
-    let config_map1 = config::load(&args.left_path);
-    let config_map2 = config::load(&args.right_path);
-
-    println!("Config Map 1: {:?}", config_map1);
-    println!("Config Map 2: {:?}", config_map2);
-
-    // Здесь будет реализация сравнения конфигураций
-    todo!()
+    match compare(&args.left_path, &args.right_path) {
+        Ok(diffs) if diffs.is_empty() => {
+            println!("Configs are identical.");
+            ExitCode::SUCCESS
+        }
+        Ok(diffs) => {
+            println!("Configs differ:");
+            for diff in diffs {
+                println!("{:?}", diff);
+            }
+            ExitCode::from(1)
+        }
+        Err(err) => {
+            eprintln!("Error comparing configs: {:?}", err);
+            ExitCode::from(2)
+        }
+    }
 }

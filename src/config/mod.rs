@@ -1,8 +1,8 @@
 mod config_format;
-pub mod config_map;
+pub(crate) mod config_map;
 mod json_parser;
-pub mod load_error;
-mod parse_error;
+pub(crate) mod load_error;
+pub(crate) mod parse_error;
 
 use crate::config::config_format::ConfigFormat;
 use crate::config::config_map::ConfigMap;

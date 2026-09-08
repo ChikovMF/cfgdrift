@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use std::{fmt, io};
 
 #[derive(Debug)]
-#[non_exhaustive]
 pub enum LoadError {
     UnsupportedFormat { path: PathBuf },
     Io { path: PathBuf, source: io::Error },

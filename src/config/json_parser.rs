@@ -1,13 +1,12 @@
 use crate::config::config_map::ConfigMap;
 use crate::config::parse_error::ParseError;
 use serde_json::Value;
-use std::fs::File;
 
 pub struct JsonParser;
 
 impl JsonParser {
-    pub fn parse(file: File) -> Result<ConfigMap, ParseError> {
-        let value: Value = serde_json::from_reader(file)?;
+    pub fn parse(reader: impl std::io::Read) -> Result<ConfigMap, ParseError> {
+        let value: Value = serde_json::from_reader(reader)?;
         Ok(flatten_json(&value, ""))
     }
 }

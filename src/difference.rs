@@ -1,19 +1,20 @@
 use crate::config::config_map::ConfigMap;
+use crate::config::config_value::ConfigValue;
 
 #[derive(Debug)]
 pub enum Difference {
     OnlyInLeft {
         path: String,
-        value: String,
+        value: ConfigValue,
     },
     OnlyInRight {
         path: String,
-        value: String,
+        value: ConfigValue,
     },
     Mismatch {
         path: String,
-        left_value: String,
-        right_value: String,
+        left_value: ConfigValue,
+        right_value: ConfigValue,
     },
 }
 

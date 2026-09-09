@@ -1,5 +1,6 @@
 mod config_format;
 pub(crate) mod config_map;
+pub(crate) mod config_value;
 mod json_parser;
 pub(crate) mod load_error;
 pub(crate) mod parse_error;

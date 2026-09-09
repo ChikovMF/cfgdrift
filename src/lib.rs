@@ -2,6 +2,7 @@
 mod config;
 mod difference;
 
+pub use crate::config::config_value::ConfigValue;
 pub use crate::config::load_error::LoadError;
 pub use crate::config::parse_error::ParseError;
 pub use difference::Difference;

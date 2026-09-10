@@ -2,7 +2,7 @@ use crate::config::config_key::ConfigKey;
 use crate::config::config_map::ConfigMap;
 use crate::config::config_value::ConfigValue;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Difference {
     OnlyInLeft {
         key: ConfigKey,

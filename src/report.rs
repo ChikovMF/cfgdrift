@@ -6,22 +6,35 @@ pub fn print_diff(writer: &mut impl std::io::Write, diffs: &[Difference]) -> std
         return Ok(());
     }
 
-    writeln!(writer, "Найдены различия в конфигурациях:")?;
+    writeln!(writer, "Найдены различия в конфигурациях (~ изменено, - только слева, + только справа):")?;
+    let (mut changed, mut only_left, mut only_right) = (0, 0, 0);
     for diff in diffs {
         match diff {
             Difference::Mismatch {
                 key,
                 left_value,
                 right_value,
-            } => writeln!(writer, "~ {key}: {left_value} → {right_value}")?,
+            } => {
+                writeln!(writer, "~ {key}: {left_value} → {right_value}")?;
+                changed += 1;
+            }
             Difference::OnlyInLeft { key, value } => {
-                writeln!(writer, "- {key}: {value}\t(только в левом)")?
+                writeln!(writer, "- {key}: {value}\t(только в левом)")?;
+                only_left += 1;
             }
             Difference::OnlyInRight { key, value } => {
-                writeln!(writer, "+ {key}: {value}\t(только в правом)")?
+                writeln!(writer, "+ {key}: {value}\t(только в правом)")?;
+                only_right += 1;
             }
         };
     }
+
+    writeln!(
+        writer,
+        "\nитого: {} (изменено {changed}, только слева {only_left}, только справа {only_right})",
+        diffs.len(),
+    )?;
+
     Ok(())
 }
 

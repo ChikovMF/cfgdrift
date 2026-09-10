@@ -6,7 +6,12 @@ pub fn print_diff(writer: &mut impl std::io::Write, diffs: &[Difference]) -> std
         return Ok(());
     }
 
-    writeln!(writer, "Найдены различия в конфигурациях (~ изменено, - только слева, + только справа):")?;
+    writeln!(writer, "Найдены различия:")?;
+    writeln!(writer, "  ~  значение изменилось (было → стало)")?;
+    writeln!(writer, "  -  ключ есть только в первом файле")?;
+    writeln!(writer, "  +  ключ есть только во втором файле")?;
+    writeln!(writer)?;
+
     let (mut changed, mut only_left, mut only_right) = (0, 0, 0);
     for diff in diffs {
         match diff {
@@ -19,11 +24,11 @@ pub fn print_diff(writer: &mut impl std::io::Write, diffs: &[Difference]) -> std
                 changed += 1;
             }
             Difference::OnlyInLeft { key, value } => {
-                writeln!(writer, "- {key}: {value}\t(только в левом)")?;
+                writeln!(writer, "- {key}: {value}")?;
                 only_left += 1;
             }
             Difference::OnlyInRight { key, value } => {
-                writeln!(writer, "+ {key}: {value}\t(только в правом)")?;
+                writeln!(writer, "+ {key}: {value}")?;
                 only_right += 1;
             }
         };
@@ -31,7 +36,7 @@ pub fn print_diff(writer: &mut impl std::io::Write, diffs: &[Difference]) -> std
 
     writeln!(
         writer,
-        "\nитого: {} (изменено {changed}, только слева {only_left}, только справа {only_right})",
+        "\nитого: {} (изменено {changed}, только в первом {only_left}, только во втором {only_right})",
         diffs.len(),
     )?;
 

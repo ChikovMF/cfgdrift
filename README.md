@@ -1,5 +1,7 @@
 # cfgdrift
 
+[![CI](https://github.com/ChikovMF/cfgdrift/actions/workflows/ci.yml/badge.svg)](https://github.com/ChikovMF/cfgdrift/actions/workflows/ci.yml)
+
 CLI-утилита, которая сравнивает два конфигурационных файла и показывает, чем они
 отличаются — «дрейф» конфигурации.
 

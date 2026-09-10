@@ -1,9 +1,6 @@
 use cfgdrift::Difference;
 
-pub fn print_diff(
-    writer: &mut impl std::io::Write,
-    diffs: &[Difference],
-) -> std::io::Result<()> {
+pub fn print_diff(writer: &mut impl std::io::Write, diffs: &[Difference]) -> std::io::Result<()> {
     if diffs.is_empty() {
         writeln!(writer, "Конфигурации идентичны")?;
         return Ok(());
@@ -16,9 +13,7 @@ pub fn print_diff(
                 key,
                 left_value,
                 right_value,
-            } => {
-                writeln!(writer, "~ {key}: {left_value} → {right_value}")?
-            }
+            } => writeln!(writer, "~ {key}: {left_value} → {right_value}")?,
             Difference::OnlyInLeft { key, value } => {
                 writeln!(writer, "- {key}: {value}\t(только в левом)")?
             }

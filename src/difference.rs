@@ -1,18 +1,19 @@
+use crate::config::config_key::ConfigKey;
 use crate::config::config_map::ConfigMap;
 use crate::config::config_value::ConfigValue;
 
 #[derive(Debug)]
 pub enum Difference {
     OnlyInLeft {
-        path: String,
+        key: ConfigKey,
         value: ConfigValue,
     },
     OnlyInRight {
-        path: String,
+        key: ConfigKey,
         value: ConfigValue,
     },
     Mismatch {
-        path: String,
+        key: ConfigKey,
         left_value: ConfigValue,
         right_value: ConfigValue,
     },
@@ -30,7 +31,7 @@ pub fn compare_maps(left_config_map: &ConfigMap, right_config_map: &ConfigMap) -
         match (left_config_map.get(key), right_config_map.get(key)) {
             (Some(left), Some(right)) if left != right => {
                 result.push(Difference::Mismatch {
-                    path: key.clone(),
+                    key: key.clone(),
                     left_value: left.clone(),
                     right_value: right.clone(),
                 });
@@ -38,13 +39,13 @@ pub fn compare_maps(left_config_map: &ConfigMap, right_config_map: &ConfigMap) -
             (Some(_), Some(_)) => {}
             (Some(left), None) => {
                 result.push(Difference::OnlyInLeft {
-                    path: key.clone(),
+                    key: key.clone(),
                     value: left.clone(),
                 });
             }
             (None, Some(right)) => {
                 result.push(Difference::OnlyInRight {
-                    path: key.clone(),
+                    key: key.clone(),
                     value: right.clone(),
                 });
             }

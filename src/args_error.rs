@@ -9,7 +9,11 @@ impl fmt::Display for ArgsError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             ArgsError::WrongArgumentCount { actual, expected } => {
-                write!(f, "неправильное количество аргументов: ожидалось {}, получено {}", expected, actual)
+                write!(
+                    f,
+                    "неправильное количество аргументов: ожидалось {}, получено {}",
+                    expected, actual
+                )
             }
         }
     }

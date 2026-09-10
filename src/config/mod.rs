@@ -1,4 +1,5 @@
 mod config_format;
+pub(crate) mod config_key;
 pub(crate) mod config_map;
 pub(crate) mod config_value;
 mod json_parser;

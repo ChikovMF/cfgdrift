@@ -1,27 +1,24 @@
+use crate::config::config_key::ConfigKey;
 use crate::config::config_value::ConfigValue;
 use std::collections::BTreeMap;
 
 #[derive(Debug)]
-pub struct ConfigMap(BTreeMap<String, ConfigValue>);
+pub struct ConfigMap(BTreeMap<ConfigKey, ConfigValue>);
 
 impl ConfigMap {
     pub fn new() -> Self {
         ConfigMap(BTreeMap::new())
     }
 
-    pub fn insert(&mut self, key: String, value: ConfigValue) {
+    pub fn insert(&mut self, key: ConfigKey, value: ConfigValue) {
         self.0.insert(key, value);
     }
 
-    pub fn extend(&mut self, other: ConfigMap) {
-        self.0.extend(other.0);
-    }
-
-    pub fn keys(&self) -> impl Iterator<Item = &String> {
+    pub fn keys(&self) -> impl Iterator<Item = &ConfigKey> {
         self.0.keys()
     }
 
-    pub fn get(&self, key: &str) -> Option<&ConfigValue> {
+    pub fn get(&self, key: &ConfigKey) -> Option<&ConfigValue> {
         self.0.get(key)
     }
 }

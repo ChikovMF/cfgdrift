@@ -3,9 +3,9 @@ mod exit_status;
 mod report;
 
 use crate::args::Args;
+use crate::exit_status::ExitStatus;
 use cfgdrift::compare;
 use clap::Parser;
-use crate::exit_status::ExitStatus;
 
 fn main() -> ExitStatus {
     let args = match Args::try_parse() {
@@ -22,7 +22,7 @@ fn main() -> ExitStatus {
 
     match compare(&args.left_path, &args.right_path) {
         Ok(diffs) => {
-            let _ = report::print_diff(&mut std::io::stdout(), &diffs);
+            let _ = report::print_diff(&mut anstream::stdout(), &diffs);
             if diffs.is_empty() {
                 ExitStatus::Identical
             } else {
@@ -30,7 +30,7 @@ fn main() -> ExitStatus {
             }
         }
         Err(err) => {
-            let _ = report::print_error(&mut std::io::stderr(), &err);
+            let _ = report::print_error(&mut anstream::stderr(), &err);
             ExitStatus::Error
         }
     }

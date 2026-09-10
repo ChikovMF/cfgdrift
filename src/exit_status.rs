@@ -1,9 +1,9 @@
 use std::process::ExitCode;
 
 pub enum ExitStatus {
-    Identical = 0,
-    Drift = 1,
-    Error = 2,
+    Identical,
+    Drift,
+    Error,
 }
 
 impl std::process::Termination for ExitStatus {

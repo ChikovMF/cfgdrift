@@ -1,25 +1,16 @@
-use crate::args_error::ArgsError;
-use std::ffi::OsString;
+use clap::Parser;
 use std::path::PathBuf;
 
+/// Аргументы.
+#[derive(Parser)]
+#[command(
+    version,
+    about = "Сравнивает два конфига и показывает дрейф между ними"
+)]
 pub struct Args {
+    /// Путь к первой конфигурации.
     pub left_path: PathBuf,
+
+    /// Путь ко второй конфигурации.
     pub right_path: PathBuf,
-}
-
-impl Args {
-    pub fn parse() -> Result<Self, ArgsError> {
-        let args: Vec<OsString> = std::env::args_os().skip(1).collect();
-
-        match args.as_slice() {
-            [left, right] => Ok(Args {
-                left_path: PathBuf::from(left),
-                right_path: PathBuf::from(right),
-            }),
-            _ => Err(ArgsError::WrongArgumentCount {
-                actual: args.len(),
-                expected: 2,
-            }),
-        }
-    }
 }

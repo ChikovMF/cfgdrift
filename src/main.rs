@@ -1,16 +1,21 @@
 mod args;
-mod args_error;
 mod report;
 
+use crate::args::Args;
 use cfgdrift::compare;
+use clap::Parser;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    let args = match args::Args::parse() {
+    let args = match Args::try_parse() {
         Ok(args) => args,
         Err(err) => {
-            let _ = report::print_error(&mut std::io::stderr(), &err);
-            return ExitCode::from(2);
+            let _ = err.print();
+            return if err.use_stderr() {
+                ExitCode::from(2)
+            } else {
+                ExitCode::SUCCESS
+            };
         }
     };
 

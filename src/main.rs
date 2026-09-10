@@ -1,20 +1,21 @@
 mod args;
+mod exit_status;
 mod report;
 
 use crate::args::Args;
 use cfgdrift::compare;
 use clap::Parser;
-use std::process::ExitCode;
+use crate::exit_status::ExitStatus;
 
-fn main() -> ExitCode {
+fn main() -> ExitStatus {
     let args = match Args::try_parse() {
         Ok(args) => args,
         Err(err) => {
             let _ = err.print();
             return if err.use_stderr() {
-                ExitCode::from(2)
+                ExitStatus::Error
             } else {
-                ExitCode::SUCCESS
+                ExitStatus::Identical
             };
         }
     };
@@ -23,14 +24,14 @@ fn main() -> ExitCode {
         Ok(diffs) => {
             let _ = report::print_diff(&mut std::io::stdout(), &diffs);
             if diffs.is_empty() {
-                ExitCode::SUCCESS
+                ExitStatus::Identical
             } else {
-                ExitCode::from(1)
+                ExitStatus::Drift
             }
         }
         Err(err) => {
             let _ = report::print_error(&mut std::io::stderr(), &err);
-            ExitCode::from(2)
+            ExitStatus::Error
         }
     }
 }

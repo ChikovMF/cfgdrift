@@ -9,6 +9,7 @@ pub enum ConfigValue {
     String(String),
     EmptyArray,
     EmptyObject,
+    Tag(String),
 }
 
 impl Display for ConfigValue {
@@ -21,6 +22,7 @@ impl Display for ConfigValue {
             ConfigValue::String(s) => write!(f, "{:?}", s),
             ConfigValue::EmptyArray => write!(f, "empty array"),
             ConfigValue::EmptyObject => write!(f, "empty object"),
+            ConfigValue::Tag(name) => write!(f, "tag !{name}"),
         }
     }
 }

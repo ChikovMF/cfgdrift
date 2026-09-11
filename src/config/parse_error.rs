@@ -5,6 +5,7 @@ use std::fmt;
 pub enum ParseError {
     Json(serde_json::Error),
     Toml(toml::de::Error),
+    Yaml(yaml_serde::Error),
     Io(std::io::Error),
 }
 
@@ -13,6 +14,7 @@ impl fmt::Display for ParseError {
         match self {
             ParseError::Json(_) => write!(f, "некорректный JSON"),
             ParseError::Toml(_) => write!(f, "некорректный TOML"),
+            ParseError::Yaml(_) => write!(f, "некорректный YAML"),
             ParseError::Io(_) => write!(f, "ошибка ввода-вывода"),
         }
     }
@@ -24,6 +26,7 @@ impl std::error::Error for ParseError {
             ParseError::Json(err) => Some(err),
             ParseError::Toml(err) => Some(err),
             ParseError::Io(err) => Some(err),
+            ParseError::Yaml(err) => Some(err),
         }
     }
 }
@@ -43,5 +46,11 @@ impl From<toml::de::Error> for ParseError {
 impl From<std::io::Error> for ParseError {
     fn from(err: std::io::Error) -> Self {
         ParseError::Io(err)
+    }
+}
+
+impl From<yaml_serde::Error> for ParseError {
+    fn from(err: yaml_serde::Error) -> Self {
+        ParseError::Yaml(err)
     }
 }

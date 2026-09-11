@@ -4,6 +4,7 @@ use std::path::Path;
 pub enum ConfigFormat {
     Json,
     Toml,
+    Yaml,
 }
 
 impl ConfigFormat {
@@ -12,6 +13,7 @@ impl ConfigFormat {
         match extension {
             "json" => Some(ConfigFormat::Json),
             "toml" => Some(ConfigFormat::Toml),
+            "yaml" | "yml" => Some(ConfigFormat::Yaml),
             _ => None,
         }
     }
@@ -27,6 +29,8 @@ mod tests {
             ("cfg.json", Some(ConfigFormat::Json)),
             ("cfg.dev.json", Some(ConfigFormat::Json)),
             ("cfg.toml", Some(ConfigFormat::Toml)),
+            ("cfg.yml", Some(ConfigFormat::Yaml)),
+            ("cfg.yaml", Some(ConfigFormat::Yaml)),
             ("cfg", None),
             (".json", None),
             ("", None),

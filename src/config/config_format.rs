@@ -3,6 +3,7 @@ use std::path::Path;
 #[derive(Debug, PartialEq)]
 pub enum ConfigFormat {
     Json,
+    Toml,
 }
 
 impl ConfigFormat {
@@ -10,6 +11,7 @@ impl ConfigFormat {
         let extension = path.extension()?.to_str()?;
         match extension {
             "json" => Some(ConfigFormat::Json),
+            "toml" => Some(ConfigFormat::Toml),
             _ => None,
         }
     }
@@ -24,6 +26,7 @@ mod tests {
         let cases = [
             ("cfg.json", Some(ConfigFormat::Json)),
             ("cfg.dev.json", Some(ConfigFormat::Json)),
+            ("cfg.toml", Some(ConfigFormat::Toml)),
             ("cfg", None),
             (".json", None),
             ("", None),

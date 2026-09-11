@@ -55,3 +55,90 @@ pub fn compare_maps(left_config_map: &ConfigMap, right_config_map: &ConfigMap) -
 
     result
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ConfigKeySegment;
+
+    #[test]
+    fn key_only_in_left_is_listed() {
+        let mut left = ConfigMap::new();
+        let key = create_key("key");
+        left.insert(key, ConfigValue::Integer(1));
+
+        let right = ConfigMap::new();
+
+        assert_eq!(
+            compare_maps(&left, &right),
+            vec![Difference::OnlyInLeft {
+                key: create_key("key"),
+                value: ConfigValue::Integer(1),
+            }],
+        );
+    }
+
+    #[test]
+    fn key_only_in_right_is_listed() {
+        let left = ConfigMap::new();
+
+        let mut right = ConfigMap::new();
+        let key = create_key("key");
+        right.insert(key, ConfigValue::Integer(1));
+
+        assert_eq!(
+            compare_maps(&left, &right),
+            vec![Difference::OnlyInRight {
+                key: create_key("key"),
+                value: ConfigValue::Integer(1),
+            }],
+        );
+    }
+
+    #[test]
+    fn empty_maps_produce_no_differences() {
+        let right = ConfigMap::new();
+        let left = ConfigMap::new();
+
+        assert_eq!(compare_maps(&left, &right), vec![],);
+    }
+
+    #[test]
+    fn equal_value_is_not_listed() {
+        let mut left = ConfigMap::new();
+        let key = create_key("key");
+        left.insert(key, ConfigValue::Integer(1));
+
+        let mut right = ConfigMap::new();
+        let key = create_key("key");
+        right.insert(key, ConfigValue::Integer(1));
+
+        assert_eq!(compare_maps(&left, &right), vec![],);
+    }
+
+    #[test]
+    fn differing_value_is_listed() {
+        let mut left = ConfigMap::new();
+        let key = create_key("key");
+        left.insert(key, ConfigValue::Integer(1));
+
+        let mut right = ConfigMap::new();
+        let key = create_key("key");
+        right.insert(key, ConfigValue::Integer(2));
+
+        assert_eq!(
+            compare_maps(&left, &right),
+            vec![Difference::Mismatch {
+                key: create_key("key"),
+                left_value: ConfigValue::Integer(1),
+                right_value: ConfigValue::Integer(2),
+            }],
+        );
+    }
+
+    fn create_key(name: &str) -> ConfigKey {
+        let mut k = ConfigKey::default();
+        k.push(ConfigKeySegment::Key(name.to_string()));
+        k
+    }
+}

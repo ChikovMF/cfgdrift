@@ -64,3 +64,72 @@ fn flatten_json(value: &Value, key: &ConfigKey, result: &mut ConfigMap) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn nested_object_is_flattened_into_dotted_keys() {
+        let json = r#"{"server": {"host": "localhost", "port": 8080}}"#;
+
+        let result = JsonParser::parse(json.as_bytes()).unwrap();
+
+        assert_eq!(
+            result.get(&create_key(&["server", "host"])),
+            Some(&ConfigValue::String("localhost".to_string()))
+        );
+        assert_eq!(
+            result.get(&create_key(&["server", "port"])),
+            Some(&ConfigValue::Integer(8080))
+        );
+        assert_eq!(result.keys().count(), 2);
+    }
+
+    #[test]
+    fn nested_empty_object_is_stored_as_empty_object_marker() {
+        let json = r#"{"object": {}}"#;
+
+        let result = JsonParser::parse(json.as_bytes()).unwrap();
+
+        assert_eq!(
+            result.get(&create_key(&["object"])),
+            Some(&ConfigValue::EmptyObject)
+        );
+        assert_eq!(result.keys().count(), 1);
+    }
+
+    #[test]
+    fn empty_top_level_array_is_stored_as_empty_array_marker() {
+        let json = r#"[]"#;
+
+        let result = JsonParser::parse(json.as_bytes()).unwrap();
+
+        assert_eq!(
+            result.get(&ConfigKey::default()),
+            Some(&ConfigValue::EmptyArray)
+        );
+        assert_eq!(result.keys().count(), 1);
+    }
+
+    #[test]
+    fn object_field_inside_array_element_is_flattened() {
+        let json = r#"[{"one": 1}]"#;
+
+        let result = JsonParser::parse(json.as_bytes()).unwrap();
+
+        let mut expected_key = ConfigKey::default();
+        expected_key.push(ConfigKeySegment::Index(0));
+        expected_key.push(ConfigKeySegment::Key("one".to_string()));
+        assert_eq!(result.get(&expected_key), Some(&ConfigValue::Integer(1)));
+        assert_eq!(result.keys().count(), 1);
+    }
+
+    fn create_key(segments: &[&str]) -> ConfigKey {
+        let mut k = ConfigKey::default();
+        for s in segments {
+            k.push(ConfigKeySegment::Key(s.to_string()));
+        }
+        k
+    }
+}

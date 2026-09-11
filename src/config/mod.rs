@@ -5,10 +5,12 @@ pub(crate) mod config_value;
 mod json_parser;
 pub(crate) mod load_error;
 pub(crate) mod parse_error;
+mod toml_parser;
 
 use crate::config::config_format::ConfigFormat;
 use crate::config::config_map::ConfigMap;
 use crate::config::load_error::LoadError;
+use crate::config::toml_parser::TomlParser;
 use json_parser::JsonParser;
 use std::fs::File;
 use std::path::Path;
@@ -26,6 +28,7 @@ pub fn load(path: &Path) -> Result<ConfigMap, LoadError> {
 
     match config_format {
         ConfigFormat::Json => JsonParser::parse(file),
+        ConfigFormat::Toml => TomlParser::parse(file),
     }
     .map_err(|source| LoadError::Parse {
         path: path.to_path_buf(),
